@@ -5,9 +5,10 @@ module.exports = {
 };
 
 function connect(cb){
-    mongoose.connect(process.env.CONN);
+    //console.log(process.env.CONN);
+    //mongoose.connect(process.env.CONN);
+    mongoose.connect('mongodb://localhost/peoplethingsplaces');
     mongoose.connection.once("open", function(){
-      
         cb();
     });
 }
