@@ -6,14 +6,7 @@ describe("models", function() {
   var ids = {};
   beforeEach(function(done) {
     db.connect(function() {
-      models.seed(function(
-        err,
-        moe,
-        larry,
-        curly,
-        rock,
-        paper,
-        scissors) {
+      models.seed(function(err,  moe,larry,curly,  rock,paper,scissors) {
         ids.moeId = moe._id;
         ids.larryId = larry._id;
         ids.curlyId = curly._id;
@@ -191,6 +184,8 @@ describe("models", function() {
     });
 
   }); //end of person tests
+  
+  
   describe("Thing", function() {
     describe("getOneByName", function() {
       var thing;
