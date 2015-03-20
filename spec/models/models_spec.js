@@ -1,18 +1,23 @@
 var models = require("../../models/models");
 var Person = models.Person;
 var Thing = models.Thing;
+var Place = models.Place;
 var db = require("../../config/db");
+
 describe("models", function() {
   var ids = {};
   beforeEach(function(done) {
     db.connect(function() {
-      models.seed(function(err,  moe,larry,curly,  rock,paper,scissors) {
+      models.seed(function(err,  moe,larry,curly,  rock,paper,scissors,  ny,london,paris) {
         ids.moeId = moe._id;
         ids.larryId = larry._id;
         ids.curlyId = curly._id;
         ids.rockId = rock._id;
         ids.paperId = paper._id;
         ids.scissorsId = scissors._id;
+        ids.nyId = ny._id;
+        ids.londonId = london._id;
+        ids.parisId = paris._id;
         done();
       });
     });
@@ -228,5 +233,49 @@ describe("models", function() {
 
     });
   }); //end of Thing
+  
+  
+  describe("Place", function() {
+    describe("getOneByName", function() {
+      var place;
+      beforeEach(function(done) {
+        Place.getOneByName("New York", function(err, _place) {
+          place = _place;
+          done();
+        });
+      });
+      it("is New York", function() {
+        expect(place.name).toEqual("New York");
+      });
+    }); 
+    describe("getOneById", function() {
+      var place;
+      beforeEach(function(done) {
+        Place.getOneById(ids.nyId, function(err, _place) {
+          place = _place;
+          done();
+        });
+      });
+      it("is ny", function() {
+        expect(place.name).toEqual("New York");
+      });
+    });
+    describe("getAll", function() {
+      var places;
+      beforeEach(function(done) {
+        Place.getAll(function(err, _places) {
+          places = _places.map(function(place) {
+            return place.name;
+          });
+          done();
+        });
+      });
+      it("return [London, NY, Paris]", function() {
+        expect(places).toEqual(["London", "New York", "Paris"]);
+      });
+
+    });
+      
+  });
 
 });
