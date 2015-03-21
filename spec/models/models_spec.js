@@ -29,6 +29,7 @@ describe("models", function() {
   });
 
   describe("Person", function() {
+
     describe("acquire", function() {
       describe("Moe gets two rocks and piece of paper", function() {
         var things;
@@ -63,6 +64,8 @@ describe("models", function() {
                 Person.getOneByName("Moe", function(err, _person) {
                   things = getThingsFromMoe(_person);
                   person = _person;
+                  //person.foo = "foodiculous";
+                  //Person.update({_id:moeId, $set:{foo:'foodiculous'}})
                   done();
                 });
               });
@@ -154,7 +157,6 @@ describe("models", function() {
           done();
         });
       });
-
       it("person is moe", function() {
         expect(person.name).toEqual("Moe");
       });
@@ -186,7 +188,6 @@ describe("models", function() {
       it("return [curly, larry, moe]", function() {
         expect(people).toEqual(["Curly", "Larry", "Moe"]);
       });
-
     });
 
   }); //end of person tests
@@ -306,7 +307,33 @@ describe("models", function() {
         expect(places).toEqual(["London", "New York", "Paris"]);
       });
     });
-    
-      
+  });
+  
+  
+  describe("PersonWithPlaces", function() {
+    describe("addPlace", function() {
+      describe("Moe favs NY", function() {
+        var person;
+        var place;
+        beforeEach(function(done) {
+          Person.getOneById(ids.moeId, function(err, _person) {
+            person = _person;
+            Place.getOneById(ids.nyId, function(err, _place) {
+              place = _place;
+              Person.addPlace(person, place, function(err, _person, _place) {
+                //if (err) {console.log("ERROR!!!!!");console.log(err);} else {console.log("seems to have worked.");}
+                Person.getOneById(ids.moeId, function(err, _person) {
+                  person = _person; //refresh person, sigh
+                  done();    
+                });
+              });
+            });
+          });
+        });
+        it("Moe has 1 favorite place", function() {
+          expect(person.numberOfFavoritePlaces).toEqual(1);
+        });
+      });
+    });    
   });
 });
