@@ -58,6 +58,7 @@ var Person = mongoose.model("Person", PersonSchema);
 
 
 
+
 var ThingSchema = new mongoose.Schema({
   name: String,
   numberOwned: {type: Number, default: 0},
@@ -90,6 +91,13 @@ PlaceSchema.statics.getOneById = function(id, cb) {
 PlaceSchema.statics.getAll = function(cb) {
   this.find({}).sort("name").exec(cb);
 };
+PlaceSchema.statics.getAllFavoritedPlaces = function(cb) {
+  this.find({ numberOfTimesFavorited: {$gt:0} }).sort("name").exec(cb);
+}
+PlaceSchema.statics.getAllUnFavoritedPlaces = function(cb) {
+  this.find({ numberOfTimesFavorited: {$lt:1} }).sort("name").exec(cb);
+}
+
 var Place = mongoose.model("Place", PlaceSchema);
 //more
 

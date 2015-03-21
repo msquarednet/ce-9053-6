@@ -53,6 +53,7 @@ describe("models", function() {
             }
           );
         };
+        
         beforeEach(function(done) {
           giveMoeTwoRocksAndAPairOfScissors(function() {
             Thing.getOneByName("Rock", function(err, _thing) {
@@ -191,6 +192,7 @@ describe("models", function() {
   }); //end of person tests
   
   
+  //THING
   describe("Thing", function() {
     describe("getOneByName", function() {
       var thing;
@@ -235,6 +237,7 @@ describe("models", function() {
   }); //end of Thing
   
   
+  //PLACE
   describe("Place", function() {
     describe("getOneByName", function() {
       var place;
@@ -273,9 +276,37 @@ describe("models", function() {
       it("return [London, NY, Paris]", function() {
         expect(places).toEqual(["London", "New York", "Paris"]);
       });
-
     });
+    
+    describe("getAllFavoritedPlaces", function() {
+      var places;
+      beforeEach(function(done) {
+        Place.getAllFavoritedPlaces(function(err, _places) {
+          places = _places.map(function(place) {
+            return place.name;
+          });
+          done();
+        });
+      });
+      it("return empty array, because nothing has been favorited, yet", function() {
+        expect(places).toEqual([]);
+      });
+    });
+    describe("getAllUnFavoritedPlaces", function() {
+      var places;
+      beforeEach(function(done) {
+        Place.getAllUnFavoritedPlaces(function(err, _places) {
+          places = _places.map(function(place) {
+            return place.name;
+          });
+          done();
+        });
+      });
+      it("return [all places]", function() {
+        expect(places).toEqual(["London", "New York", "Paris"]);
+      });
+    });
+    
       
   });
-
 });
