@@ -94,7 +94,7 @@ PersonSchema.statics.removePlace = function(personId, placeId, cb) {
   
   Person.getOneById(personId, function(err, _person) {
     var person = _person;
-    var index = person.favoritePlaces.indexOf(personId); //casting?
+    var index = person.favoritePlaces.indexOf(placeId); 
     if (index!=-1) {
       person.favoritePlaces.splice(index,1);
       person.numberOfFavoritePlaces--;
@@ -105,7 +105,7 @@ PersonSchema.statics.removePlace = function(personId, placeId, cb) {
           cb();
         });
       });
-    }
+    } else {cb();}
   });
 }
 var Person = mongoose.model("Person", PersonSchema);

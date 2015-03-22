@@ -311,22 +311,14 @@ describe("models", function() {
   
   
   describe("PersonWithPlaces", function() {
+    var person;
     describe("addPlace", function() {
       describe("Moe favs NY", function() {
-        var person;
-        var place;
         beforeEach(function(done) {
-          Person.getOneById(ids.moeId, function(err, _person) {
-            person = _person;
-            Place.getOneById(ids.nyId, function(err, _place) {
-              place = _place;
-              Person.addPlace(person, place, function(err, _person, _place) {
-                //if (err) {console.log("ERROR!!!!!");console.log(err);} else {console.log("seems to have worked.");}
-                Person.getOneById(ids.moeId, function(err, _person) {
-                  person = _person; //refresh person, sigh
-                  done();    
-                });
-              });
+          Person.addPlace(ids.moeId, ids.nyId, function(err) {
+            Person.getOneById(ids.moeId, function(err, _person) {
+              person = _person; //refresh person, sigh
+              done();    
             });
           });
         });
@@ -334,6 +326,23 @@ describe("models", function() {
           expect(person.numberOfFavoritePlaces).toEqual(1);
         });
       });
-    });    
+    });
+    describe("removePlace", function() {
+      describe("Moe UN-favs NY", function() {
+        beforeEach(function(done) {
+          Person.addPlace(ids.moeId, ids.nyId, function(err) {
+            Person.removePlace(ids.moeId, ids.nyId, function(err) {
+              Person.getOneById(ids.moeId, function(err, _person) {
+                person = _person; 
+                done();    
+              });
+            });
+          });
+        });
+        it("Moe has zero favorite places", function() {
+          expect(person.numberOfFavoritePlaces).toEqual(0);
+        });
+      });
+    });
   });
 });
