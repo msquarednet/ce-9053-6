@@ -19,7 +19,7 @@ PersonSchema.statics.getAll = function(cb) {
   this.find({}).sort("name").exec(cb);
 };
 PersonSchema.statics.acquire = function(personId, thingId, cb) {
-  Thing.findById(thingId, function(err, _thing) { //huh, why does this seem to work?
+  Thing.findById(thingId, function(err, _thing) { 
     if (_thing.numberInStock <= 0) {
       return cb({message: "NONE_IN_STOCK"});
     }
@@ -58,16 +58,6 @@ PersonSchema.statics.returnThing = function(personId, thingId, cb) {
   });
 };
 PersonSchema.statics.addPlace = function(personId, placeId, cb) {
-  //pseudo
-  /*
-  get place
-  get person
-  if (person-already-has-fav-place) {return whoops?}
-  person.add place
-  person.places++
-  place.favs++
-  return added place?
-  */
   Place.getOneById(placeId, function(err, _place) {
     var place = _place;
     Person.getOneById(personId, function(err, _person) {
@@ -89,7 +79,34 @@ PersonSchema.statics.addPlace = function(personId, placeId, cb) {
       });
     });
   });
+}
+PersonSchema.statics.removePlace = function(personId, placeId, cb) {
+  //pseudo
+  /*
+  get person
+  get index of placeId in favs
+  if (index!=-1) {
+    splice
+    person.places--
+    place.favs--
+  }  return added place?
+  */
   
+  Person.getOneById(personId, function(err, _person) {
+    var person = _person;
+    var index = person.favoritePlaces.indexOf(personId); //casting?
+    if (index!=-1) {
+      person.favoritePlaces.splice(index,1);
+      person.numberOfFavoritePlaces--;
+      person.save(function(err, person, rows) {
+        var whereid = {_id:placeId};
+        var fields = {$inc: {numberOfTimesFavorited: -1}}
+        Place.update(whereid, fields, function() {
+          cb();
+        });
+      });
+    }
+  });
 }
 var Person = mongoose.model("Person", PersonSchema);
 
