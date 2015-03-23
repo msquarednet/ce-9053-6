@@ -344,5 +344,70 @@ describe("models", function() {
         });
       });
     });
+    describe("findAllWhoFavoritedPlace", function() {
+      describe("M=ny,L=ny+london,C=ny+london+paris",function() {
+        var people;
+        function playFavorites(cb) {
+          Person.addPlace(ids.moeId, ids.nyId, function(err) {
+            Person.addPlace(ids.larryId, ids.nyId, function(err) {
+              Person.addPlace(ids.larryId, ids.londonId, function(err) {
+                Person.addPlace(ids.curlyId, ids.nyId, function(err) {
+                  Person.addPlace(ids.curlyId, ids.londonId, function(err) {
+                    Person.addPlace(ids.curlyId, ids.parisId, function(err) {
+                      cb();
+                    });
+                  });
+                });
+              });
+            });
+          })
+        }
+        describe("New York", function() {
+          beforeEach(function(done) {
+            playFavorites(function() {
+                Person.findAllWhoFavoritedPlace(ids.nyId, function(err, _people) {
+                  people = _people.map(function(p) {
+                    return p.name;
+                  });
+                  done();
+                });
+            });
+          });
+          it("NY faved by all 3", function() {
+            expect(people).toEqual(["Curly", "Larry", "Moe"]);
+          });
+        });
+        describe("London", function() {
+          beforeEach(function(done) {
+            playFavorites(function() {
+                Person.findAllWhoFavoritedPlace(ids.londonId, function(err, _people) {
+                  people = _people.map(function(p) {
+                    return p.name;
+                  });
+                  done();
+                });
+            });
+          });
+          it("London faved by 2", function() {
+            expect(people).toEqual(["Curly", "Larry"]);
+          });
+        });
+        describe("Paris", function() {
+          beforeEach(function(done) {
+            playFavorites(function() {
+                Person.findAllWhoFavoritedPlace(ids.parisId, function(err, _people) {
+                  people = _people.map(function(p) {
+                    return p.name;
+                  });
+                  done();
+                });
+            });
+          });
+          it("Paris faved by only Curly", function() {
+            expect(people).toEqual(["Curly"]);
+          });
+        });        
+      });
+    });
   });
 });

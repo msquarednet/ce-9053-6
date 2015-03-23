@@ -3,7 +3,7 @@ var mongoose = require("mongoose");
 
 var PersonSchema = new mongoose.Schema({
   name: String,
-  foo: {type:String, default:"bar"},
+  //foo: {type:String, default:"bar"},
   things: [{type: mongoose.Schema.ObjectId,ref: "Thing"}],
   numberOfThings: {type: Number,default: 0},
   favoritePlaces: [{type: mongoose.Schema.ObjectId, ref: "Place"}],
@@ -81,17 +81,6 @@ PersonSchema.statics.addPlace = function(personId, placeId, cb) {
   });
 }
 PersonSchema.statics.removePlace = function(personId, placeId, cb) {
-  //pseudo
-  /*
-  get person
-  get index of placeId in favs
-  if (index!=-1) {
-    splice
-    person.places--
-    place.favs--
-  }  return added place?
-  */
-  
   Person.getOneById(personId, function(err, _person) {
     var person = _person;
     var index = person.favoritePlaces.indexOf(placeId); 
@@ -107,6 +96,15 @@ PersonSchema.statics.removePlace = function(personId, placeId, cb) {
       });
     } else {cb();}
   });
+}
+PersonSchema.statics.findAllWhoFavoritedPlace = function(placeId, cb) {
+  // this.find({favoritePlaces: {$in: placeId}}).sort("name").exec(cb);  
+  // this.find({}).where(function() {
+  //   return (this.favoritePlaces.indexOf(placeId)!=-1) ? true:false;
+  // }).sort("name").exec(cb);  
+  //this.$where(this.favoritePlaces.indexOf(placeId)!=-1).sort("name").exec(cb);  
+  this.find({favoritePlaces: placeId}).sort("name").exec(cb);  //oh, it was easy :P
+  //this.find({}).sort("name").exec(cb);  
 }
 var Person = mongoose.model("Person", PersonSchema);
 
@@ -152,9 +150,8 @@ PlaceSchema.statics.getAllFavoritedPlaces = function(cb) {
 PlaceSchema.statics.getAllUnFavoritedPlaces = function(cb) {
   this.find({ numberOfTimesFavorited: {$lt:1} }).sort("name").exec(cb);
 }
-
 var Place = mongoose.model("Place", PlaceSchema);
-//more
+
 
 
 
